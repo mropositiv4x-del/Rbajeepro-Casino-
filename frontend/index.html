@@ -1,27 +1,86 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Casino</title>
+  <title>Rbajeepro Casino 🎰</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      text-align: center;
+      margin: 0;
+    }
+
+    h1 {
+      background: #020617;
+      padding: 15px;
+      margin: 0;
+    }
+
+    .card {
+      background: #1e293b;
+      margin: 20px auto;
+      padding: 20px;
+      width: 90%;
+      max-width: 350px;
+      border-radius: 10px;
+    }
+
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 5px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 5px;
+      border: none;
+      background: #22c55e;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #16a34a;
+    }
+
+    #result {
+      font-size: 18px;
+      margin-top: 10px;
+    }
+  </style>
 </head>
+
 <body>
 
-<h2>🎰 Casino</h2>
+<h1>🎰 Rbajeepro Casino</h1>
 
-<input id="username" placeholder="Username"><br><br>
-<input id="password" placeholder="Password"><br><br>
+<div class="card">
+  <h3>Login / Register</h3>
+  <input id="username" placeholder="Username">
+  <input id="password" type="password" placeholder="Password">
 
-<button onclick="register()">Register</button>
-<button onclick="login()">Login</button>
+  <button onclick="register()">Register</button>
+  <button onclick="login()">Login</button>
+</div>
 
-<h3>Balance: <span id="balance">0</span></h3>
+<div class="card">
+  <h3>💰 Balance: <span id="balance">0</span></h3>
 
-<input id="betAmount" placeholder="Bet"><br><br>
-<button onclick="bet()">Play</button>
+  <input id="betAmount" placeholder="Enter Bet Amount">
+  <button onclick="bet()">Play 🎲</button>
 
-<p id="result"></p>
+  <h3 id="result"></h3>
+</div>
 
 <script>
-let user = "";
+let currentUser = "";
 
 // Register
 function register() {
@@ -32,6 +91,10 @@ function register() {
       username: username.value,
       password: password.value
     })
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert(data.message);
   });
 }
 
@@ -47,14 +110,18 @@ function login() {
   })
   .then(res => res.json())
   .then(data => {
-    user = data.user.username;
-    loadBalance();
+    if (data.user) {
+      currentUser = data.user.username;
+      loadBalance();
+    } else {
+      alert("Login failed ❌");
+    }
   });
 }
 
-// Balance
+// Load Balance
 function loadBalance() {
-  fetch(`/api/balance/${user}`)
+  fetch(`/api/balance/${currentUser}`)
   .then(res => res.json())
   .then(data => {
     balance.innerText = data.balance;
@@ -67,7 +134,7 @@ function bet() {
     method: "POST",
     headers: {"Content-Type": "application/json"},
     body: JSON.stringify({
-      username: user,
+      username: currentUser,
       amount: parseInt(betAmount.value)
     })
   })
@@ -80,4 +147,4 @@ function bet() {
 </script>
 
 </body>
-  </html>
+</html>
