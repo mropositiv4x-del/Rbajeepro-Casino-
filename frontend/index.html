@@ -1,1 +1,83 @@
-/storage/emulated/0/Download/Rbajeepro-Casino--main/Rbajeepro-Casino--main/backend
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Casino</title>
+</head>
+<body>
+
+<h2>🎰 Casino</h2>
+
+<input id="username" placeholder="Username"><br><br>
+<input id="password" placeholder="Password"><br><br>
+
+<button onclick="register()">Register</button>
+<button onclick="login()">Login</button>
+
+<h3>Balance: <span id="balance">0</span></h3>
+
+<input id="betAmount" placeholder="Bet"><br><br>
+<button onclick="bet()">Play</button>
+
+<p id="result"></p>
+
+<script>
+let user = "";
+
+// Register
+function register() {
+  fetch("/api/register", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      username: username.value,
+      password: password.value
+    })
+  });
+}
+
+// Login
+function login() {
+  fetch("/api/login", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      username: username.value,
+      password: password.value
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    user = data.user.username;
+    loadBalance();
+  });
+}
+
+// Balance
+function loadBalance() {
+  fetch(`/api/balance/${user}`)
+  .then(res => res.json())
+  .then(data => {
+    balance.innerText = data.balance;
+  });
+}
+
+// Bet
+function bet() {
+  fetch("/api/bet", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      username: user,
+      amount: parseInt(betAmount.value)
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    result.innerText = data.result;
+    loadBalance();
+  });
+}
+</script>
+
+</body>
+  </html>
